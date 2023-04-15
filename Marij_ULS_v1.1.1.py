@@ -1,6 +1,9 @@
 import random as rd
 from copy import deepcopy
 
+import matplotlib.pyplot as plt
+import pandas as pd
+
 
 class SystemState():
     def __init__(self):
@@ -11,10 +14,11 @@ class SystemState():
         self.lastForecastDate = 0
         self.cardRejected = 0
         self.perfData = [[]]
+        self.perfMetrics = [[]]
 
     def addCard(self, date):
         deferral = 0
-        # while date + deferral <= self.lastForecastDate and len(
+        # while date + deferral <= self.lastForecastDat e and len(
         #         self.forecast[date + deferral]) >= self.maxPerDay:
         #     deferral += 1
         # if date + deferral > self.lastForecastDate:
@@ -76,6 +80,7 @@ class SystemState():
     def printArray(self):
         latestCard = 0
         for day in range(len(self.perfData)):
+            # generate cardsAdded string
             if len(self.perfData[day]) == 0:
                 cardsAdded = -1
             else:
@@ -86,7 +91,29 @@ class SystemState():
                 cardsAdded = ""
             else:
                 cardsAdded = "\t added " + str(cardsAdded)
+            # print out line per day
             print(day, self.perfData[day], cardsAdded)
+
+    def charts(self):
+        # generate metrics
+        latestCard = 0
+        for day in range(len(self.perfData)):
+            if len(self.perfData[day]) > 0:
+                latestCard = max(latestCard,
+                                 max(x[0] for x in self.perfData[day]))
+            self.perfMetrics.append([day, latestCard])
+        self.perfMetrics = pd.DataFrame(self.perfMetrics,
+                                        columns=['Day', 'MaxCardID'])
+        self.perfMetrics = self.perfMetrics.drop(labels=0, axis=0)
+        print(self.perfMetrics['MaxCardID'].iloc[-1] /
+              self.perfMetrics['Day'].iloc[-1])
+        # plot
+        self.perfMetrics.plot(kind='line',
+                              x='Day',
+                              y='MaxCardID')
+        plt.xlim([0, forecastDays])
+        plt.ylim([0, forecastDays])
+        plt.show()
 
 
 class Card():
@@ -101,7 +128,7 @@ class Card():
 
 s = SystemState()
 day = 0
-forecastDays = 100
+forecastDays = 1000
 for i in range(forecastDays - 1):
     s.addDay()
 s.lastForecastDate = len(s.forecast) - 1
@@ -111,3 +138,4 @@ while day < forecastDays:
     s.cardRejected = 0
     day += 1
 s.printArray()
+s.charts()
