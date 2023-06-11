@@ -1,20 +1,3 @@
-## Next ideas
-# comment code
-# reducing duration (overwrite cards database with latest review)
-# max blend allowed based on % overdue e.g. 50%
-# automatically refresh forecast + study labels on button presses
-# study visuals - buttons + explanatory text for each difficulty level
-# info page - front page with explanations (improve overdue score / increase capacity / increase interval rating scores)
-# settings page - generation horizon / max blend allowed / rating scores / forecast assumed rating score
-# large card spillover to next days (maybe? not sure if good to allow this)
-# performance improvements
-
-## Long term ideas
-# Chart for historical performance
-# Reducing duration curves applied to forecast
-# Port to web
-
-
 import datetime
 import random as rd
 import tkinter as tk
@@ -62,18 +45,15 @@ class Engine():
         # trim and extrapolate forecast
         self.forecast['date'] = self.forecast['date'].apply(
             lambda x: self.decode_date(x))
-        self.forecast = self.forecast[
-            self.forecast['date'] >= dt.today().date()]
-        average_capacity = int(self.forecast['capacity'].mean()) + 1
+        self.forecast = self.forecast[self.forecast['date']>=dt.today().date()]
+        average_capacity = int(self.forecast['capacity'].mean())+1
         last_date = self.forecast['date'].max()
-        extrapolated = pd.DataFrame({"date": pd.date_range(
-            self.encode_date(last_date + datetime.timedelta(days=1)),
-            dt.today().date() + datetime.timedelta(days=1000),
-            freq='D')})
-        extrapolated['capacity'] = average_capacity
+        extrapolated = pd.DataFrame({"date": pd.date_range(self.encode_date(last_date+datetime.timedelta(days=1)),
+                                         dt.today().date()+datetime.timedelta(days=1000),
+                                         freq='D')})
+        extrapolated['capacity']=average_capacity
         extrapolated['date'] = extrapolated['date'].apply(lambda x: x.date())
-        self.forecast = pd.concat([self.forecast, extrapolated]).reset_index(
-            drop=True)
+        self.forecast = pd.concat([self.forecast, extrapolated]).reset_index(drop=True)
         self.forecast['date'] = self.forecast['date'].apply(
             lambda x: self.encode_date(x))
 
@@ -306,6 +286,7 @@ class Engine():
 
 class GUI(Engine):
     def __init__(self, window):
+        Engine.__init__(self)
         # tkinter settings
         s = ttk.Style()
         self.font = ('Segoe UI', 24)
@@ -314,7 +295,6 @@ class GUI(Engine):
         # Set up tabs
         tabControl = ttk.Notebook(window)
         self.set_up_tabs(tabControl)
-        Engine.__init__(self)
         self.input_visuals(self.tab_input)
         self.forecast_visuals(self.tab_forecast)
         self.study_visuals(self.tab_study)
