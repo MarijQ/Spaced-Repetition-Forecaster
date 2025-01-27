@@ -1,6 +1,6 @@
-# MindNest
+# Spaced Repetition Forecaster
 
-MindNest is an advanced, custom-built Spaced Repetition System (SRS) tailored to optimise your learning and retention by dynamically prioritising reviews based on recall, ease, and stability of previously seen items. This system offers powerful data visualisations, fine-grained control of learning pipelines, and flexible integration with study habits.
+This is an advanced, custom-built Spaced Repetition System (SRS) tailored to optimise your learning and retention by dynamically prioritising reviews based on recall, ease, and stability of previously seen items. This system offers powerful data visualisations, fine-grained control of learning pipelines, and flexible integration with study habits.
 
 ---
 
