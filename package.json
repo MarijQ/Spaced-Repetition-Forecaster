@@ -1,0 +1,6 @@
+{
+  "dependencies": {
+    "@tauri-apps/api": "^2.6.0",
+    "use-debounce": "^10.0.5"
+  }
+}
